@@ -1,5 +1,5 @@
 #Selection sort is for linear sorting
-#Python has an integrated .sort() funkcion, this is just for fun
+#Python has an integrated .sort() function, this is just for fun
 
 def selectionSortArray(a):
     for i in range(0, len(a)):
