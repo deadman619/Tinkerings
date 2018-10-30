@@ -1,5 +1,3 @@
-items = {'rope':1,'torch':6,'gold coin':42,'dagger':1}
-
 def displayInventory (inventory):
     print('Inventory: ')
     item_total = 0
@@ -16,6 +14,8 @@ def lootItems(inventory, addedItems):
             inventory[item]=1
 
 #example
+
+items = {'rope':1,'torch':6,'gold coin':42,'dagger':1}
 dragonLoot = ['gold coin', 'dagger', 'gold coin', 'gold coin', 'ruby']
 lootItems(items, dragonLoot)
 print (items)
