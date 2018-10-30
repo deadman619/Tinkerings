@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Guessing game</title>
+	<script>
+
+		var value = Math.random() * 20;
+		var value_rounded = Math.floor(value);
+		var number_of_guesses = 0;
+
+		function game() {
+			
+			str= " Your guess is: " + document.getElementById("guess").value;
+			number_of_guesses++
+			var guess = document.getElementById("guess").value;
+			document.getElementById("paragraph").innerHTML = str
+			
+			if (value_rounded > guess) {
+				str += ". Value is larger than your guess.";
+			} else if (value_rounded < guess) {
+				str += ". Value is less than your guess.";
+			} else if (value_rounded == guess) {
+				str += ". Congratulation, you are win.";
+			}
+			str += " Your number of guesses is " + number_of_guesses + ".";
+			document.getElementById("paragraph").innerHTML = str
+		}
+
+	</script>
+</head>
+<body>
+	<p>I'm thinking of a number between 1 and 20. Guess:</p>
+	<form>
+		<input type='text' id='guess' value=''><br>
+		<input type='button' onclick='game()' value='Press Me'>
+	</form>
+ 	<p id='paragraph'></p>
+</body>
+</html>
