@@ -1,0 +1,27 @@
+body {
+	height: 100vh;
+	overflow: hidden;
+}
+.container-fluid {
+	margin-top: 20vh;
+}
+.flightInfo p {
+	font-size: 1em;
+}
+.jumbotron {
+	padding: 10px;
+	background:url('../images/ticketPaper.jpg') 70% 70% no-repeat fixed;
+}
+.flightInfo {
+	display: inline;
+}
+h4:first-child {
+	position: relative;
+	bottom: 8px;
+}
+.ticketPage {
+	font-family: 'Dancing Script', cursive;
+}
+.ticketPage .price {
+	margin: 0;
+}

@@ -1,0 +1,49 @@
+body {
+	background:url('../images/headerImg.jpg') 70% 70% no-repeat fixed;
+	height: 100vh;
+	overflow: hidden;
+}
+.form-group {
+	margin-top: 30vh;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.form-control {
+	background-color: rgba(255,255,255,0.2);
+	border: none;
+	color: #fff;
+}
+.form-control::placeholder {
+	color: #fff;
+}
+option {
+	background-color: #000;
+}
+textarea.form-control {
+	resize: none;
+	height: 34px;
+	outline: none;
+}
+.noPad {
+	padding: 0px 2px;
+}
+.topMargin {
+	margin-top: 35px;
+}
+.errorP {
+	margin-top: 5vh;
+	padding: 5px;
+	background-color: rgba(255,255,255, 0.2);
+	color: #f3f3f3;
+	opacity: 0;
+}
+@media (max-width: 600px) {
+	.form-group {
+		margin-top: 5vh;
+		width: 100%;
+	}
+	.jumbotron p{
+		font-size: 1em;
+	}
+}
