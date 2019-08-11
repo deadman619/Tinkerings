@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Knockout Basics</title>
+	<link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+</head>
+	<body>
+		<h1>Knockout Basics</h1>
+		<p><span data-bind="text: fullName"></span>'s name is here</p>
+		<button data-bind="click: popup">Aaa!!!</button>
+
+		<!-- The with binding lets you provide a binding context -->
+		<p data-bind="with: featuredProduct">
+			Been longing for that <span data-bind="html: name"></span>?
+			<br/>
+			<!-- The attr binding lets you define HTML attributes using viewModel data -->
+			Get one now for the low low price of <a data-bind="attr: {href: permalink}"><strong data-bind="text: price"></strong>!!!</a>
+		</p>
+
+		<table>
+			<tr>
+				<th></th>
+				<th>Item</th>
+				<th>Price</th>
+			</tr>
+
+			<!-- jQuery memes for fadeOut and fadeIn animations (beforeRemove and afterAdd are default ko parameters for the foreach binding)-->
+			<tbody  data-bind="foreach: {data: shoppingCart, beforeRemove: fadeOut, afterAdd: fadeIn}">
+				<tr >
+					<td>
+						<!-- Checkboxes update observableArrays dynamically, no need to write pop and push functions -->
+						<input type="checkbox" data-bind="checked: $root.selectedItems, value: $data.name"/>
+					</td>
+					<td data-bind="text: name"></td>
+					<td data-bind="text: price"></td>
+					<!-- The $root references the top level viewModel instead of the item in the loop -->
+					<!-- If we use $data which is the default, it would refer to our current viewModel (Product[i] in this case) -->
+					<!-- Good for accessing simple things like strings or numbers instead of their properties (tags[i])-->
+					<!-- More properties: $index, $parent (i.e. inside the foreach tags, $parent.name to get Product.name)-->
+					<td>
+						<ul data-bind="foreach: tags">
+							<li data-bind="text: $data"></li>
+						</ul>
+					</td>
+					<!-- The if binding prevents rendering, the visible binding just hides it with display: none, css binding to add conditional classes -->
+					<td data-bind="if: discount() > 0, style: {'color': 'red'}">Sale: <span data-bind="text: formattedDiscount"></span></td>
+					<td><button data-bind="click: $root.removeStuff">Remove</button></td>
+					<td><button data-bind="click: $root.destroyStuff">Destroy</button></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<button data-bind="click: moreMemes">Add more memes</button>
+		<button data-bind="click: nowLess">Less</button>
+
+		<form action="#" method="post">
+
+			<!-- Event observers can be set in the HTML portion -->
+			<p data-bind="event: {mouseover: () => showDetails('firstName'), mouseout: hideDetails}">First name: <input data-bind="value: firstName"/></p>
+			<p data-bind="event: {mouseover: () => showDetails('lastName'), mouseout: hideDetails}">Last name: <input data-bind="value: lastName"/></p>
+			
+			<p>Primary field: <input data-bind="value: primaryField"/></p>
+			<!-- Second field is only usable if the first one has a non false value -->
+			<p>Secondary field: <input data-bind="value: secondaryField, enable: primaryField"/></p>
+
+			<!-- If the options are objects, add in an additional parameter optionsText: "text key" -->
+			<select data-bind="options: options, value: pickedOption"></select> <span data-bind="text: pickedOption"></span>
+			<br/><br/>
+			<select data-bind="options: options, selectedOptions: pickedOptions" size=6 multiple='true'></select> <span data-bind="text: pickedOptions"></span>
+
+			<p>Very important terms of service, you have to agree to this to save your shit: <input type="checkbox" data-bind="checked: spamMyEmail"/></p>
+			<p><button data-bind="enable: spamMyEmail, click: saveUserData">Save</button></p>
+			
+			<p data-bind="visible: details() === 'firstName'">This is visible when first name details are visible</p>
+			<p data-bind="visible: details() === 'lastName'">This is visible when last name details are visible</p>
+		
+		</form>
+
+		<p>Display selected item list?</p>
+		Yes <input data-bind="checked: displaySelectedItems" type="radio" name="displaySelectedItems" value=true>
+		<!-- The 'no' radio button has to have an empty string value to be considered false for some reason -->
+		No <input data-bind="checked: displaySelectedItems" type="radio" name="displaySelectedItems" value="">
+		<p data-bind="visible: displaySelectedItems">Selected items: <span data-bind="text: selectedItems"></span></p>
+
+
+
+
+
+		<script src="knockout-2.2.0.js"></script>
+		<script src="jquery-3.4.1.js"></script>
+		<script type="text/javascript">
+
+			function PersonViewModel() {
+				// Observable sets up a two way update between html and js
+				this.firstName = ko.observable("John");
+				this.lastName = ko.observable("Smith");
+				this.popup = () => alert("Aaaaaaaaaaaa");
+
+				// Computed sets up a link between the objects in it i.e. if you update firstName it updates fullName
+				this.fullName = ko.computed(() => this.firstName() + " " + this.lastName());
+
+				// ObservableArray is self explanatory
+				// Loop through array with the foreach binding in HTML
+				this.shoppingCart = ko.observableArray([
+					new Product("Memes", 10.99, null, 50),
+					new Product("Cats", 5.99),
+					new Product("Hammer", '25k gold', ['Metal', 'Rare', 'Drop']),
+				]);
+
+				this.moreMemes = () => this.shoppingCart.push(new Product("More memes", 9.99));
+
+				this.nowLess = () => this.shoppingCart.pop();
+
+				// Knockout's built in array deletion method
+				this.removeStuff = product => this.shoppingCart.remove(product);
+
+				// This keeps the deleted item in the array and makes it possible to check for destroyed items
+				// For AJAX and back-end stuff mostly (more efficient way to manage deletions)
+				this.destroyStuff = product => this.shoppingCart.destroy(product);
+
+				this.details = ko.observable("");
+
+				// Just so I don't forget the default argument order -> target, event
+				this.showDetails = (details) => this.details(details);
+				this.hideDetails = () => this.details("");
+
+				this.saveUserData = (person, event) => {
+					alert(person.fullName() + " wants to get spam in his email. What a nerd.");
+					if (event.ctrlKey) {
+						alert("The ctrl key was being pressed during the button click for whatever reason.");
+					};
+				};
+
+				this.primaryField = ko.observable("");
+				this.secondaryField = ko.observable("");
+				this.spamMyEmail = ko.observable(true);
+				this.displaySelectedItems = ko.observable(false);
+				this.selectedItems = ko.observableArray([]);
+				this.options = ko.observableArray(['This', 'Is', 'For', 'A', 'Dropdown', 'Selection']);
+				this.pickedOption = ko.observable("");
+				this.pickedOptions = ko.observableArray([]);
+
+				this.fadeOut = e => { 
+					if (e.nodeType === 1) {
+						$(e).fadeOut(() => $(e).remove()); 
+					};
+				};
+				this.fadeIn = e => {
+					if (e.nodeType === 1) {
+						$(e).hide().fadeIn();
+					};
+				};
+			};
+
+			function Product(name, price, tags, discount, permalink) {
+				this.name = ko.observable(name);
+				this.price = ko.observable(price);
+
+				// Default values set here instead of the argument because of ES5 memes which I'll forget without this here
+				tags = typeof(tags) !== 'undefined' ? tags : [];
+				this.tags = ko.observableArray(tags);
+
+				discount = typeof(discount) !== 'undefined' ? discount : 0;
+				this.discount = ko.observable(discount);
+				this.formattedDiscount = ko.computed(() => this.discount() + "% off");
+
+				this.permalink = ko.observable(permalink);
+			};
+
+			var vm = new PersonViewModel();
+			var featured = new Product("<strong style='color: orange'>[Thunderfury, Blessed Blade of the Windseeker]</strong>", 9.99, null, null, 'https://classic.wowhead.com/item=19019/thunderfury-blessed-blade-of-the-windseeker');
+			this.featuredProduct = ko.observable(featured);
+			ko.applyBindings(vm);
+			vm.firstName("Test");
+
+		</script>
+	</body>
+</html>
